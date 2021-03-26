@@ -5,24 +5,26 @@
 
 package main
 
+import (
+	"github.com/google/wire"
+)
+
 // Injectors from wire.go:
 
 func InitEndingA(m MonsterParam, p PlayerParam) (EndingA, error) {
-	player, err := NewPlayer(p)
-	if err != nil {
-		return EndingA{}, err
-	}
-	monster := NewMonster(m)
-	endingA := NewEndingA(player, monster)
-	return endingA, nil
+	mainEndingA := EndingA{}
+	return mainEndingA, nil
 }
 
 func InitEndingB(m MonsterParam, p PlayerParam) (EndingB, error) {
-	player, err := NewPlayer(p)
-	if err != nil {
-		return EndingB{}, err
-	}
-	monster := NewMonster(m)
-	endingB := NewEndingB(player, monster)
-	return endingB, nil
+	mainEndingB := EndingB{}
+	return mainEndingB, nil
 }
+
+// wire.go:
+
+var monsterPlayerSet = wire.NewSet(NewMonster, NewPlayer)
+
+var endingA = wire.NewSet(monsterPlayerSet, wire.Struct(new(EndingA)))
+
+var endingB = wire.NewSet(monsterPlayerSet, wire.Struct(new(EndingB)))
